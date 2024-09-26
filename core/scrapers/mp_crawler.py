@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from typing import Union
 import httpx
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -12,7 +11,7 @@ header = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/604.1 Edg/112.0.100.0'}
 
 
-async def mp_crawler(url: str, logger) -> tuple[int, Union[set, dict]]:
+async def mp_crawler(url: str, logger) -> (int, dict):
     if not url.startswith('https://mp.weixin.qq.com') and not url.startswith('http://mp.weixin.qq.com'):
         logger.warning(f'{url} is not a mp url, you should not use this function')
         return -5, {}
@@ -34,17 +33,6 @@ async def mp_crawler(url: str, logger) -> tuple[int, Union[set, dict]]:
                     return -7, {}
 
         soup = BeautifulSoup(response.text, 'html.parser')
-
-        if url.startswith('https://mp.weixin.qq.com/mp/appmsgalbum'):
-            # 文章目录
-            urls = {li.attrs['data-link'].replace("http://", "https://", 1) for li in soup.find_all('li', class_='album__list-item')}
-            simple_urls = set()
-            for url in urls:
-                cut_off_point = url.find('chksm=')
-                if cut_off_point != -1:
-                    url = url[:cut_off_point - 1]
-                simple_urls.add(url)
-            return 1, simple_urls
 
         # Get the original release date first
         pattern = r"var createTime = '(\d{4}-\d{2}-\d{2}) \d{2}:\d{2}'"

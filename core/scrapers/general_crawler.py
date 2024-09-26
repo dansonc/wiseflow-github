@@ -23,10 +23,10 @@ from requests.compat import urljoin
 from scrapers import scraper_map
 
 
-model = os.environ.get('HTML_PARSE_MODEL', 'gpt-4o-mini-2024-07-18')
+model = os.environ.get('HTML_PARSE_MODEL', 'gpt-3.5-turbo') # 如果环境变量中没有HTML_PARSE_MODEL这个变量，就使用gpt-3.5-turbo这个模型，如果有这个变量，就使用这个变量的值
 header = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/604.1 Edg/112.0.100.0'}
-extractor = GeneralNewsExtractor()
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/604.1 Edg/112.0.100.0'} # 设置请求头，模拟浏览器访问，防止被网站屏蔽，这里使用的是Edge浏览器的请求头，可以根据需要更改，也可以使用其他请求头。
+extractor = GeneralNewsExtractor() # 创建一个GeneralNewsExtractor对象，用于提取新闻内容
 
 
 def tag_visible(element: Comment) -> bool:
@@ -205,7 +205,7 @@ async def general_crawler(url: str, logger) -> tuple[int, Union[set, dict]]:
             result["author"] = ""
 
     # 5. post process
-    date_str = extract_and_convert_dates(result.get('publish_time', ''))
+    date_str = extract_and_convert_dates(result['publish_time'])
     if date_str:
         result['publish_time'] = date_str
     else:
